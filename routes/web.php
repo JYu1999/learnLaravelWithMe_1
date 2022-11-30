@@ -20,7 +20,7 @@ Route::get('/', function () {
 Route::get('posts/{post}', function ($slug){
 
     $path =__DIR__ . "/../resources/posts/{$slug}.html";
-
+    //dd($path);
 
 
     if(!file_exists($path)){
@@ -29,6 +29,8 @@ Route::get('posts/{post}', function ($slug){
         //return redirect('/');
         abort(404);
     }
-    $post = file_get_contents($path);
+   $post =  cache()->remember("posts.{$slug}", 5, function (){
+        $post = file_get_contents($path);
+    });
     return view('post', ['post'=>$post]);
-});
+})->where('post','[A-z_\-]+');
